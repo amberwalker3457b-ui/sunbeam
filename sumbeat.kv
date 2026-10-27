@@ -1,0 +1,196 @@
+#:import AnimatedBackground music_app.widgets.animated_background.AnimatedBackground
+#:import SeekSlider music_app.widgets.seek_slider.SeekSlider
+
+ScreenManager:
+    id: screen_manager
+
+    LibraryScreen:
+        name: "library"
+        list_container: library_list
+
+    PlayerScreen:
+        name: "player"
+        bg_widget: bg
+        cover_image: cover_img
+        title_label: title_lbl
+        artist_label: artist_lbl
+        seek_slider: seek
+
+    FavoritesScreen:
+        name: "favorites"
+        list_container: favorites_list
+
+    ThemePickerScreen:
+        name: "themes"
+        list_container: themes_list
+
+
+<LibraryScreen>:
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            title: "Your Music"
+            elevation: 2
+            right_action_items: [["palette", lambda x: app.go_to_theme_picker()], ["heart", lambda x: app.go_to_favorites()]]
+
+        ScrollView:
+            MDList:
+                id: library_list
+
+
+<ThemePickerScreen>:
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            title: "Theme"
+            elevation: 2
+            left_action_items: [["arrow-left", lambda x: app.go_to_library()]]
+
+        ScrollView:
+            MDList:
+                id: themes_list
+
+
+<FavoritesScreen>:
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            title: "Favorites"
+            elevation: 2
+            left_action_items: [["arrow-left", lambda x: app.go_to_library()]]
+
+        ScrollView:
+            MDList:
+                id: favorites_list
+
+
+<PlayerScreen>:
+    FloatLayout:
+
+        AnimatedBackground:
+            id: bg
+            size: root.width, root.height
+            pos: 0, 0
+
+        MDBoxLayout:
+            orientation: "vertical"
+            padding: "24dp"
+            spacing: "16dp"
+            size_hint_y: None
+            height: root.height
+            pos: 0, 0
+
+            MDTopAppBar:
+                title: "Now Playing"
+                elevation: 0
+                md_bg_color: 0, 0, 0, 0
+                left_action_items: [["arrow-left", lambda x: app.go_to_library()]]
+
+            Widget:
+                size_hint_y: 0.08
+
+            MDCard:
+                id: cover_card
+                size_hint: 0.85, None
+                height: self.width
+                pos_hint: {"center_x": 0.5}
+                radius: [24]
+                elevation: 8
+
+                Image:
+                    id: cover_img
+                    source: "assets/default_cover.png"
+                    allow_stretch: True
+                    keep_ratio: False
+
+            Widget:
+                size_hint_y: 0.06
+
+            MDLabel:
+                id: title_lbl
+                text: "Nothing playing"
+                halign: "center"
+                font_style: "H5"
+                size_hint_y: None
+                height: self.texture_size[1]
+
+            MDLabel:
+                id: artist_lbl
+                text: ""
+                halign: "center"
+                theme_text_color: "Secondary"
+                size_hint_y: None
+                height: self.texture_size[1]
+
+            Widget:
+                size_hint_y: 0.04
+
+            SeekSlider:
+                id: seek
+                min: 0
+                max: 100
+                value: 0
+                on_user_seek: root.seek_to_percent(self.value)
+
+            MDBoxLayout:
+                size_hint_y: None
+                height: "24dp"
+
+                MDLabel:
+                    text: root.position_text
+                    theme_text_color: "Secondary"
+                    font_style: "Caption"
+
+                Widget:
+
+                MDLabel:
+                    text: root.duration_text
+                    theme_text_color: "Secondary"
+                    font_style: "Caption"
+                    halign: "right"
+
+            Widget:
+                size_hint_y: 0.04
+
+            MDBoxLayout:
+                size_hint_y: None
+                height: "64dp"
+                spacing: "24dp"
+                pos_hint: {"center_x": 0.5}
+
+                MDIconButton:
+                    icon: "heart-outline"
+                    id: fav_icon
+                    on_release: root.toggle_favorite()
+                    pos_hint: {"center_y": 0.5}
+
+                Widget:
+
+                MDIconButton:
+                    icon: "skip-previous"
+                    icon_size: "36sp"
+                    on_release: root.previous_track()
+                    pos_hint: {"center_y": 0.5}
+
+                MDIconButton:
+                    icon: root.play_pause_icon
+                    icon_size: "56sp"
+                    on_release: root.toggle_play_pause()
+                    pos_hint: {"center_y": 0.5}
+
+                MDIconButton:
+                    icon: "skip-next"
+                    icon_size: "36sp"
+                    on_release: root.next_track()
+                    pos_hint: {"center_y": 0.5}
+
+                Widget:
+
+                Widget:
+                    size_hint_x: None
+                    width: "48dp"
+
+            Widget:

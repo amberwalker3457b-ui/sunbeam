@@ -1,0 +1,5 @@
+kivy==2.3.0
+kivymd==1.2.0
+pillow>=10.0
+mutagen>=1.47
+buildozer>=1.5
