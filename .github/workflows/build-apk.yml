@@ -1,0 +1,26 @@
+name: Build SumBeat APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out the project
+        uses: actions/checkout@v4
+
+      - name: Build with Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          command: buildozer android debug
+          buildozer_version: stable
+
+      - name: Upload the APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: sumbeat-apk
+          path: ${{ steps.buildozer.outputs.filename }}
